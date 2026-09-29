@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap"><section>
+<h1 style="font-size:40px">마이페이지</h1>
+<div class="panel">
+<p><b>이름</b><br>{{ user['name'] }}</p>
+<p><b>이메일</b><br>{{ user['email'] }}</p>
+<p><b>전화번호</b><br>{{ user['phone'] }}</p>
+{% if user['role'] == 'admin' %}<p><a class="btn primary" href="{{ url_for('admin') }}">관리자 대시보드로 이동</a></p>{% endif %}
+</div>
+</section></div>
+{% endblock %}

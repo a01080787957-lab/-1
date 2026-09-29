@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap"><div class="auth">
+<h1>로그인</h1>
+<form method="post">
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<div class="field"><label>이메일</label><input type="email" name="email" required autocomplete="email"></div>
+<div class="field"><label>비밀번호</label><input type="password" name="password" required autocomplete="current-password"></div>
+<div class="form-actions"><button class="btn primary" type="submit">로그인</button></div>
+</form>
+<p class="small">아직 계정이 없나요? <a href="{{ url_for('signup') }}"><u>회원가입</u></a></p>
+</div></div>
+{% endblock %}

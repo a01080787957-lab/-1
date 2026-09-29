@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="wrap"><section>
+<h1 style="font-size:40px">관리자 대시보드</h1>
+<p class="section-desc">회원은 이 페이지에 접근할 수 없습니다. 여기서 홈페이지의 연락처·카카오톡·문구·사진을 관리할 수 있습니다.</p>
+
+<div class="admin-grid">
+<div class="panel">
+<h2>홈페이지 기본 정보</h2>
+<form method="post" action="{{ url_for('admin_settings') }}">
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<div class="field"><label>사업명</label><input name="business_name" value="{{ settings.business_name }}" required></div>
+<div class="field"><label>메인 문구</label><input name="tagline" value="{{ settings.tagline }}" required></div>
+<div class="field"><label>소개 문구</label><textarea name="description">{{ settings.description }}</textarea></div>
+<div class="field"><label>전화번호</label><input name="phone" value="{{ settings.phone }}" required></div>
+<div class="field"><label>문자번호</label><input name="sms" value="{{ settings.sms }}" required></div>
+<div class="field"><label>카카오톡 링크</label><input name="kakao_url" value="{{ settings.kakao_url }}" placeholder="https://open.kakao.com/..."></div>
+<button class="btn primary" type="submit">저장</button>
+</form>
+</div>
+
+<div class="panel">
+<h2>사진 추가</h2>
+<p class="small">최대 5MB, JPG/JPEG/PNG/WEBP</p>
+<form method="post" action="{{ url_for('admin_upload') }}" enctype="multipart/form-data">
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<div class="field"><input type="file" name="photo" accept=".jpg,.jpeg,.png,.webp" required></div>
+<button class="btn primary" type="submit">사진 업로드</button>
+</form>
+</div>
+</div>
+
+<section style="padding-bottom:25px"><div class="panel">
+<h2>사진 관리</h2>
+{% if gallery %}
+<div class="gallery">
+{% for item in gallery %}
+<div class="gallery-item">
+<img src="{{ url_for('static', filename='uploads/' + item['filename']) }}" alt="업로드 사진">
+<div class="inner">
+<div class="small">{{ item['original_name'] }}</div>
+<form method="post" action="{{ url_for('set_hero_image', gallery_id=item['id']) }}" style="margin-top:8px">
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<button class="btn" type="submit">{% if settings.hero_image == item['filename'] %}현재 대표사진{% else %}대표사진으로 사용{% endif %}</button>
+</form>
+<form method="post" action="{{ url_for('delete_gallery', gallery_id=item['id']) }}" style="margin-top:8px" onsubmit="return confirm('이 사진을 삭제할까요?')">
+<input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+<button class="btn danger" type="submit">삭제</button>
+</form>
+</div>
+</div>
+{% endfor %}
+</div>
+{% else %}<p class="small">아직 사진이 없습니다.</p>{% endif %}
+</div></section>
+
+<div class="panel">
+<h2>가입 회원</h2>
+<div class="table-wrap">
+<table class="table"><thead><tr><th>이름</th><th>이메일</th><th>전화</th><th>권한</th><th>가입일</th></tr></thead>
+<tbody>{% for member in members %}<tr><td>{{ member['name'] }}</td><td>{{ member['email'] }}</td><td>{{ member['phone'] }}</td><td>{{ member['role'] }}</td><td>{{ member['created_at'] }}</td></tr>{% endfor %}</tbody></table>
+</div>
+</div>
+</section></div>
+{% endblock %}
